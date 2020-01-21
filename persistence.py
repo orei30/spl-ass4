@@ -8,14 +8,16 @@ class Employee:
         self.name = name
         self.salary = salary
         self.coffee_stand = coffee_stand
-
+    def toString(self):
+        return "("+ id + ", " + name + ", " + salary + ", " + coffee_stand + ")"
 
 class Supplier:
     def __init__(self, id, name, contact_information):
         self.id = id
         self.name = name
         self.contact_information = contact_information
-
+    def toString(self):
+        return "("+ id + ", " + name + ", " + contact_information + ")"
 
 class Product:
     def __init__(self, id, description, price, quantity):
