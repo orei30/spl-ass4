@@ -10,18 +10,12 @@ class Employee:
         self.salary = salary
         self.coffee_stand = coffee_stand
 
-    def toString(self):
-        return "("+ self.id + ", " + self.name + ", " + self.salary + ", " + self.coffee_stand + ")"
-
 
 class Supplier:
     def __init__(self, id, name, contact_information):
         self.id = id
         self.name = name
         self.contact_information = contact_information
-
-    def toString(self):
-        return "("+ self.id + ", " + self.name + ", " + self.contact_information + ")"
 
 
 class Product:
@@ -47,12 +41,12 @@ class Activity:
         self.date = date
 
 
-class EmployeeWithIncome:
-    def __init__(self, name, salary, location, income):
-        self.name=name
-        self.salary=salary
-        self.location=location
-        self.income=income
+# class EmployeeWithIncome:
+#     def __init__(self, name, salary, location, income):
+#         self.name=name
+#         self.salary=salary
+#         self.location=location
+#         self.income=income
 
 
 class ActivityWithName:
@@ -157,6 +151,15 @@ class _CoffeeStands:
         self._conn.execute("""
             INSERT INTO Coffee_stands (id,location, number_of_employees) VALUES (?, ?, ?)
         """, [coffeeStand.id, coffeeStand.location, coffeeStand.number_of_employees])
+
+    def find(self, coffee_stand_id):
+        c = self._conn.cursor()
+        c.execute("""
+            SELECT * FROM Coffee_stands WHERE id = ?
+        """, [coffee_stand_id])
+
+        return CoffeeStand(*c.fetchone())
+
     
     def find_all(self):
         c = self._conn.cursor()
@@ -236,23 +239,22 @@ class _Repository:
     """)
 
     # def employee_income(self):
-    #     c = self._conn.cursor()
-    #     all = c.execute("""
-    #                         SELECT SUM employee.name, employee.salary, coffee_stand.location, activity.quantity*product.price FROM employees JOIN activities ON activity.activator_id = employee.id
-    #                         JOIN coffee_stands ON employee.coffee_stand = coffee_stand.id ORDER by employee.name
-    #                     """).fetchall()
-    #     return [EmployeeWithIncome(*row) for row in all]
+    #      c = self._conn.cursor()
+    #      income = c.execute("""
+    #                        SELECT SUM employees.name, employees.salary, coffee_stands.location, activities.quantity*products.price, FROM employees JOIN activities ON employees.id=activities.activator_id
+    #                        JOIN coffeeStands ON employees.coffee_stand=coffeeStands.id JOIN products ON activities.product_id=product.id
+    #                    """).fetchall()
+    #      return [EmployeeWithIncome(*row) for row in income]
 
-     # def find_income(self,employee):
-     #     c = self._conn.cursor()
-     #     income = c.execute("""
-     #                SELECT SUM employee.name, employee.salary, coffee_stand.location, activity.quantity*product.price, FROM employees JOIN activities ON activity.activator_id = employee.id
-     #                JOIN coffee_stands ON employee.coffee_stand = coffee_stand.id
-     #            """).fetchall()
-     #     output=0
-     #     for item in income:
-     #         output=output+int(item[0])
-     #     return output
+    def find_income(self, employee):
+        c = self._conn.cursor()
+        income = c.execute("""
+                    SELECT SUM (-activities.quantity*products.price) FROM activities
+                    JOIN products ON activities.product_id=products.id WHERE activities.activator_id = ?
+                """, [employee.id]).fetchone()
+        if type(income[0]) is float:
+            return income[0]
+        return 0
 
     def activity_with_name(self):
         c = self._conn.cursor()
@@ -260,21 +262,8 @@ class _Repository:
             SELECT act.date, pro.description, act.quantity, emp.name, sup.name FROM activities as act
             JOIN products as pro ON act.product_id = pro.id LEFT JOIN employees as emp ON act.activator_id=emp.id LEFT JOIN suppliers as sup ON act.activator_id=sup.id ORDER by act.date
         """).fetchall()
-
         return [ActivityWithName(*row) for row in all]
 
-    # def init_tables(self):
-    #     with open('config.txt', 'r') as reader:
-    #         for line in reader.readlines():
-    #             words = line.split(',')
-    #             if words[0] == 'C':
-    #                 _CoffeeStands.insert(self, CoffeeStand(words[1].strip(), words[2].strip(), words[3].strip()))
-    #             if words[0] == 'S':
-    #                 _Suppliers.insert(self, Supplier(words[1].strip(), words[2].strip(), words[3].strip()))
-    #             if words[0] == 'E':
-    #                 _Employees.insert(self, Employee(words[1].strip(), words[2].strip(), words[3].strip(), words[4].strip()))
-    #             if words[0] == 'P':
-    #                 _Products.insert(self, Product(words[1].strip(), words[2].strip(), words[3].strip(), 0))
 
 # the repository singleton
 repo = _Repository()
