@@ -1,5 +1,6 @@
 import os
 from persistence import *
+import printdb
 
 with open('action.txt', 'r') as reader:
     for line in reader.readlines():
@@ -13,3 +14,5 @@ with open('action.txt', 'r') as reader:
             product.quantity = float(product.quantity) + float(activity.quantity)
             repo.products.update(product)
         repo.activities.insert(activity)
+
+printdb.main()

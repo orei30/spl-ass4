@@ -1,6 +1,7 @@
 import sqlite3
 import atexit
 
+
 # Data Transfer Objects:
 class Employee:
     def __init__(self, id, name, salary, coffee_stand):
@@ -8,16 +9,20 @@ class Employee:
         self.name = name
         self.salary = salary
         self.coffee_stand = coffee_stand
+
     def toString(self):
-        return "("+ id + ", " + name + ", " + salary + ", " + coffee_stand + ")"
+        return "("+ self.id + ", " + self.name + ", " + self.salary + ", " + self.coffee_stand + ")"
+
 
 class Supplier:
     def __init__(self, id, name, contact_information):
         self.id = id
         self.name = name
         self.contact_information = contact_information
+
     def toString(self):
-        return "("+ id + ", " + name + ", " + contact_information + ")"
+        return "("+ self.id + ", " + self.name + ", " + self.contact_information + ")"
+
 
 class Product:
     def __init__(self, id, description, price, quantity):
@@ -40,6 +45,24 @@ class Activity:
         self.quantity = quantity
         self.activator_id = activator_id
         self.date = date
+
+
+class EmployeeWithIncome:
+    def __init__(self, name, salary, location, income):
+        self.name=name
+        self.salary=salary
+        self.location=location
+        self.income=income
+
+
+class ActivityWithName:
+    def __init__(self, date, description, quantity, name_seller, name_supp):
+        self.date=date
+        self.description=description
+        self.quantity=quantity
+        self.name_seller=name_seller
+        self.name_supp=name_supp
+
 
 # Data Access Objects:
 # All of these are meant to be singletons
@@ -68,6 +91,7 @@ class _Employees:
  
         return [Employee(*row) for row in all]
 
+
 class _Suppliers:
     def __init__(self, conn):
         self._conn = conn
@@ -92,6 +116,7 @@ class _Suppliers:
         """).fetchall()
  
         return [Supplier(*row) for row in all]
+
 
 class _Products:
     def __init__(self, conn):
@@ -123,6 +148,7 @@ class _Products:
  
         return [Product(*row) for row in all]
 
+
 class _CoffeeStands:
     def __init__(self, conn):
         self._conn = conn
@@ -139,6 +165,7 @@ class _CoffeeStands:
         """).fetchall()
  
         return [CoffeeStand(*row) for row in all]
+
 
 class _Activities:
     def __init__(self, conn):
@@ -157,6 +184,7 @@ class _Activities:
  
         return [Activity(*row) for row in all]
 
+
 #The Repository
 class _Repository:
     def __init__(self):
@@ -173,39 +201,67 @@ class _Repository:
      
     def create_tables(self):
         self._conn.executescript("""
-        CREATE TABLE Suppliers (
+        CREATE TABLE suppliers (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             contact_information TEXT
         );
 
-        CREATE TABLE Products (
+        CREATE TABLE products (
             id INTEGER PRIMARY KEY,
             description TEXT NOT NULL,
             price REAL NOT NULL,
             quantity INTEGER NOT NULL
         );
         
-        CREATE TABLE Coffee_stands (
+        CREATE TABLE coffee_stands (
             id INTEGER PRIMARY KEY,
             location TEXT NOT NULL,
             number_of_employees INTEGER
         );
             
-        CREATE TABLE Employees (
+        CREATE TABLE employees (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             salary REAL NOT NULL,
             coffee_stand INTEGER REFERENCES Coffee_stand(id)
         );
 
-        CREATE TABLE Activities (
+        CREATE TABLE activities (
             product_id INTEGER INTEGER REFERENCES Product(id),
             quantity INTEGER NOT NULL,
             activator_id INTEGER NOT NULL,
             date DATE NOT NULL
         );
     """)
+
+    # def employee_income(self):
+    #     c = self._conn.cursor()
+    #     all = c.execute("""
+    #                         SELECT SUM employee.name, employee.salary, coffee_stand.location, activity.quantity*product.price FROM employees JOIN activities ON activity.activator_id = employee.id
+    #                         JOIN coffee_stands ON employee.coffee_stand = coffee_stand.id ORDER by employee.name
+    #                     """).fetchall()
+    #     return [EmployeeWithIncome(*row) for row in all]
+
+     # def find_income(self,employee):
+     #     c = self._conn.cursor()
+     #     income = c.execute("""
+     #                SELECT SUM employee.name, employee.salary, coffee_stand.location, activity.quantity*product.price, FROM employees JOIN activities ON activity.activator_id = employee.id
+     #                JOIN coffee_stands ON employee.coffee_stand = coffee_stand.id
+     #            """).fetchall()
+     #     output=0
+     #     for item in income:
+     #         output=output+int(item[0])
+     #     return output
+
+    def activity_with_name(self):
+        c = self._conn.cursor()
+        all = c.execute("""
+            SELECT act.date, pro.description, act.quantity, emp.name, sup.name FROM activities as act
+            JOIN products as pro ON act.product_id = pro.id LEFT JOIN employees as emp ON act.activator_id=emp.id LEFT JOIN suppliers as sup ON act.activator_id=sup.id ORDER by act.date
+        """).fetchall()
+
+        return [ActivityWithName(*row) for row in all]
 
     # def init_tables(self):
     #     with open('config.txt', 'r') as reader:
