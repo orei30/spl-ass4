@@ -2,8 +2,8 @@ Activities
 (9003, 100, 101, 20200101)
 (9006, 50, 102, 20200101)
 (9003, -20, 1003, 20200201)
-(9003, -10, 1004, 20200301)
 (9006, -50, 1003, 20200201)
+(9003, -10, 1004, 20200301)
 Coffee stands
 (11, 'Bld-90', 1)
 (12, 'Bld-32', 2)
@@ -25,14 +25,14 @@ Suppliers
 (102, 'Osem', '1-700-70-76-76')
 
 Employees report
-(Alice, 45.5, Bld-90, 0)
-(Bob, 45.5, Bld-32, 0)
-(Charlie, 45.5, Bld-32, 595.0)
-(Dan, 45.5, Bld-71, 85.0)
+Alice 45.5 Bld-90 0
+Bob 45.5 Bld-32 0
+Charlie 45.5 Bld-32 595.0
+Dan 45.5 Bld-71 85.0
 
 Activities
-(20200101, 'Magnum', 100, 'None', 'Strauss')
-(20200101, 'Chocolate', 50, 'None', 'Osem')
-(20200201, 'Magnum', -20, 'Charlie', 'None')
-(20200201, 'Chocolate', -50, 'Charlie', 'None')
-(20200301, 'Magnum', -10, 'Dan', 'None')
+(20200101, 'Magnum', 100, None, 'Strauss')
+(20200101, 'Chocolate', 50, None, 'Osem')
+(20200201, 'Magnum', -20, 'Charlie', None)
+(20200201, 'Chocolate', -50, 'Charlie', None)
+(20200301, 'Magnum', -10, 'Dan', None)

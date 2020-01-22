@@ -3,45 +3,42 @@ from persistence import *
 
 def print_all_tables():
     print("Activities")
-    activities = repo.activities.find_all()
+    activities = repo.activities.getToList()
     for activity in activities:
-        print("({}, {}, {}, {})".format(activity.product_id, activity.quantity, activity.activator_id, activity.date))
+        print(activity)
     print("Coffee stands")
-    coffee_stands = repo.coffeeStands.find_all()
+    coffee_stands = repo.coffeeStands.getToList()
     for coffee_stand in coffee_stands:
-        print("({}, '{}', {})".format(coffee_stand.id, coffee_stand.location, coffee_stand.number_of_employees))
+        print(coffee_stand)
     print("Employees")
-    employees = repo.employees.find_all()
+    employees = repo.employees.getToList()
     for employee in employees:
-        print("({}, '{}', {}, {})".format(employee.id, employee.name, employee.salary, employee.coffee_stand))
+        print(employee)
     print("Products")
-    products = repo.products.find_all()
+    products = repo.products.getToList()
     for product in products:
-        print("({}, '{}', {}, {})".format(product.id, product.description, product.price, product.quantity))
+        print(product)
     print("Suppliers")
-    suppliers = repo.suppliers.find_all()
+    suppliers = repo.suppliers.getToList()
     for supplier in suppliers:
-        print("({}, '{}', '{}')".format(supplier.id, supplier.name, supplier.contact_information))
-
+        print(supplier)
 
 def employee_report():
     print("")
     print("Employees report")
     for employee in repo.employees.find_all():
         location=repo.coffeeStands.find(employee.coffee_stand)
-        print("{}, {}, {}, {}".format(employee.name, employee.salary, repo.coffeeStands.find(employee.coffee_stand).location, repo.find_income(employee)))
+        print("{} {} {} {}".format(employee.name, employee.salary, repo.coffeeStands.find(employee.coffee_stand).location, repo.find_income(employee)))
 
 
 def activity_report():
-    activity_with_name=repo.activity_with_name()
+    activity_with_name = repo.activity_with_name()
     if len(activity_with_name) > 0:
         print("")
         print("Activities")
         for item in activity_with_name:
-            print("({}, '{}', {}, '{}', '{}')".format(item.date, item.description, item.quantity, item.name_seller, item.name_supp))
+            print(item)
 
-
-# def main():
 print_all_tables()
 employee_report()
 activity_report()

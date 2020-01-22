@@ -1,4 +1,5 @@
 import os
+import sys
 
 if os.path.isfile('moncafe.db'):
     os.remove('moncafe.db')
@@ -6,9 +7,8 @@ if os.path.isfile('moncafe.db'):
 from persistence import *
 
 repo.create_tables()
-# repo.init_tables()
 
-with open('config.txt', 'r') as reader:
+with open(sys.argv[1], 'r') as reader:
     for line in reader.readlines():
         words = line.split(',')
         if words[0] == 'C':
@@ -19,5 +19,3 @@ with open('config.txt', 'r') as reader:
             repo.employees.insert(Employee(words[1].strip(), words[2].strip(), words[3].strip(), words[4].strip()))
         if words[0] == 'P':
             repo.products.insert(Product(words[1].strip(), words[2].strip(), words[3].strip(), 0))
-
-import printdb

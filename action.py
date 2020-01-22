@@ -1,7 +1,8 @@
 import os
+import sys
 from persistence import *
 
-with open('action.txt', 'r') as reader:
+with open(sys.argv[1], 'r') as reader:
     for line in reader.readlines():
         words = line.split(',')
         activity = Activity(words[0], words[1], words[2], words[3])

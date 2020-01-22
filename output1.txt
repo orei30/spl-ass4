@@ -20,7 +20,7 @@ Suppliers
 (102, 'Osem', '1-700-70-76-76')
 
 Employees report
-(Alice, 45.5, Bld-90, 0)
-(Bob, 45.5, Bld-32, 0)
-(Charlie, 45.5, Bld-32, 0)
-(Dan, 45.5, Bld-71, 0)
+Alice 45.5 Bld-90 0
+Bob 45.5 Bld-32 0
+Charlie 45.5 Bld-32 0
+Dan 45.5 Bld-71 0

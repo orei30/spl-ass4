@@ -10,13 +10,11 @@ class Employee:
         self.salary = salary
         self.coffee_stand = coffee_stand
 
-
 class Supplier:
     def __init__(self, id, name, contact_information):
         self.id = id
         self.name = name
         self.contact_information = contact_information
-
 
 class Product:
     def __init__(self, id, description, price, quantity):
@@ -24,7 +22,6 @@ class Product:
         self.description = description
         self.price = price
         self.quantity = quantity
-
 
 class CoffeeStand:
     def __init__(self, id, location, number_of_employees):
@@ -39,24 +36,6 @@ class Activity:
         self.quantity = quantity
         self.activator_id = activator_id
         self.date = date
-
-
-# class EmployeeWithIncome:
-#     def __init__(self, name, salary, location, income):
-#         self.name=name
-#         self.salary=salary
-#         self.location=location
-#         self.income=income
-
-
-class ActivityWithName:
-    def __init__(self, date, description, quantity, name_seller, name_supp):
-        self.date=date
-        self.description=description
-        self.quantity=quantity
-        self.name_seller=name_seller
-        self.name_supp=name_supp
-
 
 # Data Access Objects:
 # All of these are meant to be singletons
@@ -80,10 +59,16 @@ class _Employees:
     def find_all(self):
         c = self._conn.cursor()
         all = c.execute("""
-            SELECT * FROM Employees
+            SELECT * FROM Employees ORDER BY id
         """).fetchall()
  
         return [Employee(*row) for row in all]
+
+    def getToList(self):
+        c = self._conn.cursor()
+        return c.execute("""
+            SELECT * FROM Employees ORDER BY id
+        """).fetchall()
 
 
 class _Suppliers:
@@ -106,11 +91,16 @@ class _Suppliers:
     def find_all(self):
         c = self._conn.cursor()
         all = c.execute("""
-            SELECT * FROM Suppliers
+            SELECT * FROM Suppliers ORDER BY id
         """).fetchall()
  
         return [Supplier(*row) for row in all]
 
+    def getToList(self):
+        c = self._conn.cursor()
+        return c.execute("""
+            SELECT * FROM Suppliers ORDER BY id
+        """).fetchall()
 
 class _Products:
     def __init__(self, conn):
@@ -137,11 +127,16 @@ class _Products:
     def find_all(self):
         c = self._conn.cursor()
         all = c.execute("""
-            SELECT * FROM Products
+            SELECT * FROM Products ORDER BY id
         """).fetchall()
  
         return [Product(*row) for row in all]
 
+    def getToList(self):
+        c = self._conn.cursor()
+        return c.execute("""
+            SELECT * FROM Products ORDER BY id
+        """).fetchall()
 
 class _CoffeeStands:
     def __init__(self, conn):
@@ -159,16 +154,20 @@ class _CoffeeStands:
         """, [coffee_stand_id])
 
         return CoffeeStand(*c.fetchone())
-
     
     def find_all(self):
         c = self._conn.cursor()
         all = c.execute("""
-            SELECT * FROM Coffee_stands
+            SELECT * FROM Coffee_stands ORDER BY id
         """).fetchall()
  
         return [CoffeeStand(*row) for row in all]
 
+    def getToList(self):
+        c = self._conn.cursor()
+        return c.execute("""
+            SELECT * FROM Coffee_stands ORDER BY id
+        """).fetchall()
 
 class _Activities:
     def __init__(self, conn):
@@ -182,11 +181,16 @@ class _Activities:
     def find_all(self):
         c = self._conn.cursor()
         all = c.execute("""
-            SELECT * FROM Activities
+            SELECT * FROM Activities ORDER BY date
         """).fetchall()
  
         return [Activity(*row) for row in all]
 
+    def getToList(self):
+        c = self._conn.cursor()
+        return c.execute("""
+            SELECT * FROM Activities ORDER BY date
+        """).fetchall()
 
 #The Repository
 class _Repository:
@@ -238,14 +242,6 @@ class _Repository:
         );
     """)
 
-    # def employee_income(self):
-    #      c = self._conn.cursor()
-    #      income = c.execute("""
-    #                        SELECT SUM employees.name, employees.salary, coffee_stands.location, activities.quantity*products.price, FROM employees JOIN activities ON employees.id=activities.activator_id
-    #                        JOIN coffeeStands ON employees.coffee_stand=coffeeStands.id JOIN products ON activities.product_id=product.id
-    #                    """).fetchall()
-    #      return [EmployeeWithIncome(*row) for row in income]
-
     def find_income(self, employee):
         c = self._conn.cursor()
         income = c.execute("""
@@ -258,12 +254,10 @@ class _Repository:
 
     def activity_with_name(self):
         c = self._conn.cursor()
-        all = c.execute("""
+        return c.execute("""
             SELECT act.date, pro.description, act.quantity, emp.name, sup.name FROM activities as act
             JOIN products as pro ON act.product_id = pro.id LEFT JOIN employees as emp ON act.activator_id=emp.id LEFT JOIN suppliers as sup ON act.activator_id=sup.id ORDER by act.date
         """).fetchall()
-        return [ActivityWithName(*row) for row in all]
-
 
 # the repository singleton
 repo = _Repository()
