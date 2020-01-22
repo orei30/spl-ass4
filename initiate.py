@@ -19,3 +19,5 @@ with open('config.txt', 'r') as reader:
             repo.employees.insert(Employee(words[1].strip(), words[2].strip(), words[3].strip(), words[4].strip()))
         if words[0] == 'P':
             repo.products.insert(Product(words[1].strip(), words[2].strip(), words[3].strip(), 0))
+
+import printdb

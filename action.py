@@ -1,6 +1,5 @@
 import os
 from persistence import *
-import printdb
 
 with open('action.txt', 'r') as reader:
     for line in reader.readlines():
@@ -15,4 +14,4 @@ with open('action.txt', 'r') as reader:
             repo.products.update(product)
         repo.activities.insert(activity)
 
-printdb.main()
+import printdb
